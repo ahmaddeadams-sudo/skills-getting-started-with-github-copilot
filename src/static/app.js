@@ -23,11 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Build participants list HTML
         let participantsHTML = '';
         if (details.participants.length > 0) {
-          participantsHTML = '<div class="participants-section"><strong>Participants:</strong><ul class="participants-list">';
-          details.participants.forEach(participant => {
-            participantsHTML += `<li>${participant}</li>`;
-          });
-          participantsHTML += '</ul></div>';
+          // Use map and join for better performance, and escape HTML to prevent XSS
+          const escapeHtml = (text) => {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+          };
+          const participantItems = details.participants.map(participant => 
+            `<li>${escapeHtml(participant)}</li>`
+          ).join('');
+          participantsHTML = `<div class="participants-section"><strong>Participants:</strong><ul class="participants-list">${participantItems}</ul></div>`;
         }
 
         activityCard.innerHTML = `
